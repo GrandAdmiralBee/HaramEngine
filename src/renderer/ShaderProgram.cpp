@@ -1,5 +1,9 @@
 #include "ShaderProgram.h"
+
+#include <glm/gtc/type_ptr.hpp>
+
 #include <iostream>
+
 
 namespace renderer
 {
@@ -28,8 +32,10 @@ namespace renderer
 		GLint success;
 		glGetProgramiv(m_ID, GL_LINK_STATUS, &success);
 		if (!success) {
-			GLchar infolog[1024];
-			glGetProgramInfoLog(m_ID, 1024, nullptr, infolog);
+			int length;
+			glGetProgramiv(m_ID, GL_INFO_LOG_LENGTH, &length);
+			char* infolog = (char*)alloca(length * sizeof(char));
+			glGetShaderInfoLog(m_ID, length, &length, infolog);
 			std::cerr << "ERROR::SAHDER: Link time error:\n" << infolog << std::endl;
 		}
 		else {
@@ -48,11 +54,14 @@ namespace renderer
 
 		GLint success;
 		glGetShaderiv(shaderID, GL_COMPILE_STATUS, &success);
+
 		if (!success) {
-			GLchar infolog[1024];
-		glGetShaderInfoLog(shaderID, 1024, nullptr, infolog);
-		std::cerr << "ERROR::SAHDER: Compile time error:\n" << infolog << std::endl;
-		return false;
+			int length;
+			glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &length);
+			char* infolog = (char*)alloca(length * sizeof(char));
+			glGetShaderInfoLog(shaderID, length, &length, infolog);
+			std::cerr << "ERROR::SAHDER: Compile time error:\n" << infolog << std::endl;
+			return false;
 		}
 		return true;
 	}
@@ -89,5 +98,10 @@ namespace renderer
 	void ShaderProgram::setInt(const std::string& name, const GLint value) {
 		glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value);
 	}
+
+	void ShaderProgram::SetMatrix4(const std::string& name, const glm::mat4& matrix) {
+		glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, glm::value_ptr(matrix));
+	}
+
 
 }

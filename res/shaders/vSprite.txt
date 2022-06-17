@@ -1,0 +1,12 @@
+#version 460
+layout(location = 0) in vec4 vertex_position;
+layout(location = 1) in vec2 texture_coordinates;
+out vec2 texCoordinates;
+
+uniform mat4 modelMat;
+uniform mat4 projectionMat;
+
+void main(){
+   texCoordinates = texture_coordinates;
+   gl_Position = projectionMat * modelMat * vertex_position;
+}

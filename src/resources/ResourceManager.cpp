@@ -1,6 +1,8 @@
 #include "ResourceManager.h"
 #include "../renderer/ShaderProgram.h"
 #include "../renderer/Texture2D.h"
+#include "../renderer/Sprite.h"
+
 
 #include <sstream>
 #include <fstream>
@@ -8,6 +10,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
+#define STBI_ONLY_JPEG
 #include "stb_image.h"
 
 
@@ -92,6 +95,43 @@ std::shared_ptr<renderer::Texture2D> ResourceManager::getTexture(const std::stri
 		return it->second;
 	}
 	std::cerr << "Cannot find the texture: " << texturename << std::endl;
+	return nullptr;
+}
+
+
+std::shared_ptr<renderer::Sprite> ResourceManager::loadSprite(const std::string& spriteName,
+																const std::string& textureName,
+																const std::string& shaderName,
+																const unsigned int spriteWidth,
+																const unsigned int spriteHeight) {
+
+	auto pTexture = getTexture(textureName);
+	if (!pTexture) {
+		std::cerr << "Cannot find the texture: " << textureName << " for the sprite: " << spriteName << std::endl;
+	}
+
+	auto pShaderProgram = getShaderProgram(shaderName);
+	if (!pTexture) {
+		std::cerr << "Cannot find the shader: " << shaderName << " for the sprite: " << spriteName << std::endl;
+	}
+
+	std::shared_ptr<renderer::Sprite> newSprite = m_sprites.emplace(textureName, 
+																		std::make_shared<renderer::Sprite>(pTexture,
+																		pShaderProgram,
+																		glm::vec2(0.f, 0.f),
+																		glm::vec2(spriteWidth, spriteHeight))).first->second;
+
+
+	return newSprite;
+
+}
+
+std::shared_ptr<renderer::Sprite> ResourceManager::getSprite(const std::string& spriteName) {
+	SpritesMap::const_iterator it = m_sprites.find(spriteName);
+	if (it != m_sprites.end()) {
+		return it->second;
+	}
+	std::cerr << "Cannot find the texture: " << spriteName << std::endl;
 	return nullptr;
 }
 
