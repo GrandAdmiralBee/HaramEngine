@@ -108,10 +108,10 @@ int main(int argc, char** argv)
         auto tex2 = resourceManager.loadTexture("GlebTexture", "res/textures/Gleb.jpg");
 
         auto pButterflySprite = resourceManager.loadSprite("ButterflySprite", "ButterflyTexture", "SpriteShader", 92, 68);
-        pButterflySprite->setPosition(glm::vec2(410, 168));
+        pButterflySprite->setPosition(glm::vec2(0, 0));
 
         auto pGlebSprite = resourceManager.loadSprite("GlebSprite", "GlebTexture", "SpriteShader", 160, 106);
-        pGlebSprite->setPosition(glm::vec2(250, 100));
+        pGlebSprite->setPosition(glm::vec2(0, 0));
 
         GLuint points_vbo = 0;
         glGenBuffers(1, &points_vbo);
@@ -172,9 +172,9 @@ int main(int argc, char** argv)
             glClear(GL_COLOR_BUFFER_BIT);
 
 
-            pGlebSprite->render();
+            
             pButterflySprite->render();
-
+            pGlebSprite->render();
 
 
             /* Swap front and back buffers */
