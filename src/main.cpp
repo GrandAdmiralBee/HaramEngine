@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
+#include <ctime>
 
 #include "renderer/ShaderProgram.h"
 #include "resources/ResourceManager.h"
@@ -51,7 +52,7 @@ void glfwKeyCallback(GLFWwindow* pWindow, int key, int scancode, int action, int
 
 int main(int argc, char** argv)
 {
-
+    srand(time(NULL));
 
     /* Initialize the library */
     if (!glfwInit())
@@ -92,76 +93,52 @@ int main(int argc, char** argv)
 	glClearColor(0.0, 0.0, 0.0, 1);
     {
         ResourceManager resourceManager(argv[0]);
-        auto pDefaultShaderProgram = resourceManager.loadShaders("DefaultShader", "res/shaders/vertex.txt", "res/shaders/fragment.txt");
-        if (!pDefaultShaderProgram) {
-            std::cerr << "Cannot create shader program: " << "DefaultShader" << std::endl;
-            return -1;
-        }
 
         auto pSpriteShaderProgram = resourceManager.loadShaders("SpriteShader", "res/shaders/vSprite.txt", "res/shaders/fSprite.txt");
-        if (!pDefaultShaderProgram) {
+        if (!pSpriteShaderProgram) {
             std::cerr << "Cannot create shader program: " << "SpriteShader" << std::endl;
             return -1;
         }
 
-        auto tex = resourceManager.loadTexture("ButterflyTexture", "res/textures/butterfly.png");
-        auto tex2 = resourceManager.loadTexture("GlebTexture", "res/textures/Gleb.jpg");
+        auto tex = resourceManager.loadTexture("DefaultTexture", "res/textures/map_16x16.png");
 
-        auto pButterflySprite = resourceManager.loadSprite("ButterflySprite", "ButterflyTexture", "SpriteShader", 92, 68);
-        pButterflySprite->setPosition(glm::vec2(410, 168));
+        std::vector<std::string> subTexturesNames16 = { "eagle", "sign", "explosion1", "explosion2" , "explosion3", "explosion4", "impact1", "impact2" };
+        std::vector<std::string> GlebTextureNames = { "gleb1", "gleb2" , "gleb3" , "gleb4" , "gleb5"};
 
-        auto pGlebSprite = resourceManager.loadSprite("GlebSprite", "GlebTexture", "SpriteShader", 160, 106);
-        pGlebSprite->setPosition(glm::vec2(250, 100));
 
-        GLuint points_vbo = 0;
-        glGenBuffers(1, &points_vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+        auto pTextureAtlas = resourceManager.loadTextureAtlas("DefaultTextureAtlas", "res/textures/map_16x16.png", std::move(subTexturesNames16), 16, 16);
+        auto pTextureAtlasGleb = resourceManager.loadTextureAtlas("GlebTextureAtlas", "res/textures/Gleb100x65.png", std::move(GlebTextureNames), 100, 65);
 
-        GLuint colors_vbo = 0;
-        glGenBuffers(1, &colors_vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
-        GLuint texCoordinates_vbo = 0;
-        glGenBuffers(1, &texCoordinates_vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, texCoordinates_vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(texCoordinates), texCoordinates, GL_STATIC_DRAW);
 
-        GLuint vao = 0;
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
+        auto pSprite1 = resourceManager.loadSprite("NewSprite1", "GlebTextureAtlas", "SpriteShader", 100, 65, "gleb1");
+        auto pSprite2 = resourceManager.loadSprite("NewSprite2", "GlebTextureAtlas", "SpriteShader", 100, 65, "gleb2");
+        auto pSprite3 = resourceManager.loadSprite("NewSprite3", "GlebTextureAtlas", "SpriteShader", 100, 65, "gleb3");
+        auto pSprite4 = resourceManager.loadSprite("NewSprite4", "GlebTextureAtlas", "SpriteShader", 100, 65, "gleb4");
+        auto pSprite5 = resourceManager.loadSprite("NewSprite5", "GlebTextureAtlas", "SpriteShader", 100, 65, "gleb5");
 
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
 
-        glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        pSprite1->setPosition(glm::vec2(rand() % 540, rand() % 380));
+        pSprite2->setPosition(glm::vec2(rand() % 540, rand() % 380));
 
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, texCoordinates_vbo);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+        pSprite3->setPosition(glm::vec2(rand() % 540, rand() % 380));
 
-        pDefaultShaderProgram->use();
-        pDefaultShaderProgram->setInt("tex", 0);
+        pSprite4->setPosition(glm::vec2(rand() % 540, rand() % 380));
 
-        glm::mat4 modelMatrix_1 = glm::mat4(1.f);
-        modelMatrix_1 = glm::translate(modelMatrix_1, glm::vec3(270.f, 200.f, 0.f));
+        pSprite5->setPosition(glm::vec2(rand() % 540, rand() % 380));
 
-        glm::mat4 modelMatrix_2 = glm::mat4(1.f);
-        modelMatrix_2 = glm::translate(modelMatrix_2, glm::vec3(370.f, 200.f, 0.f));
 
-        glm::mat4 modelMatrix_3 = glm::mat4(1.f);
-        modelMatrix_3 = glm::translate(modelMatrix_3, glm::vec3(320.f, 300.f, 0.f));
+
+
+       
+
+    
 
         glm::mat4 projectionMatrix = glm::ortho(0.f, static_cast<float>(g_windowSize.x), 0.f, static_cast<float>(g_windowSize.y), -100.f, 100.f);
 
-        pDefaultShaderProgram->SetMatrix4("projectionMat", projectionMatrix);
 
         pSpriteShaderProgram->use();
-        pSpriteShaderProgram->setInt("tex2", 0);
+        //pSpriteShaderProgram->setInt("tex2", 0);
         pSpriteShaderProgram->SetMatrix4("projectionMat", projectionMatrix);
 
 
@@ -171,11 +148,12 @@ int main(int argc, char** argv)
             /* Render here */
             glClear(GL_COLOR_BUFFER_BIT);
 
+             pSprite1->render();
 
-            pGlebSprite->render();
-            pButterflySprite->render();
-
-
+             pSprite2->render();
+            //pSprite3->render();
+            //pSprite4->render();
+            //pSprite5->render();
 
             /* Swap front and back buffers */
             glfwSwapBuffers(pWindow);

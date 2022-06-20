@@ -8,12 +8,13 @@
 namespace renderer {
 
 	Sprite::Sprite(const std::shared_ptr<Texture2D> pTexture,
+		const std::string initialSubTexture,
 		const std::shared_ptr<ShaderProgram> pShaderProgram,
 		const glm::vec2& position,
 		const glm::vec2& size,
 		const float rotation)
-		: m_pTexture(std::move(pTexture))
-		, m_pShaderProgram(std::move(pShaderProgram))
+		: m_pTexture(pTexture)
+		, m_pShaderProgram(pShaderProgram)
 		, m_position(position)
 		, m_size(size)
 		, m_rotation(rotation)
@@ -34,15 +35,17 @@ namespace renderer {
 		0.f,  0.f
 		};
 
-		GLfloat textureCoords[] = {
-			//U    V
-			0.f,  0.f,
-			0.f,  1.f,
-			1.f,  1.f,
+		auto subTexture = pTexture->getSubTexture(initialSubTexture);
 
-			1.f,  1.f,
-			1.f,  0.f,
-			0.f,  0.f
+		GLfloat textureCoords[] = {
+			//U                                  V
+			subTexture.leftBottomUV.x, subTexture.leftBottomUV.y,
+			subTexture.leftBottomUV.x,  subTexture.rightTopUV.y,
+			subTexture.rightTopUV.x,  subTexture.rightTopUV.y,
+
+			subTexture.rightTopUV.x,  subTexture.rightTopUV.y,
+			subTexture.rightTopUV.x,  subTexture.leftBottomUV.y,
+			subTexture.leftBottomUV.x, subTexture.leftBottomUV.y
 		};
 
 		glGenVertexArrays(1, &m_VAO);
@@ -77,10 +80,10 @@ namespace renderer {
 
 		glm::mat4 model(1.f);
 
-		model = glm::translate(model, glm::vec3(m_position, 1.f));
-		model = glm::translate(model, glm::vec3(0.5f * m_size.x, 0.5f + m_size.y, 1.f));
+		model = glm::translate(model, glm::vec3(m_position, 0.f));
+		model = glm::translate(model, glm::vec3(0.5f * m_size.x, 0.5f * m_size.y, 0.f));
 		model = glm::rotate(model, glm::radians(m_rotation), glm::vec3(0.f, 0.f, 1.f));
-		model = glm::translate(model, glm::vec3(-0.5f * m_size.x, -0.5f + m_size.y, 1.f));
+		model = glm::translate(model, glm::vec3(-0.5f * m_size.x, -0.5f * m_size.y, 0.f));
 		model = glm::scale(model, glm::vec3(m_size, 1.f));
 
 		glBindVertexArray(m_VAO);
