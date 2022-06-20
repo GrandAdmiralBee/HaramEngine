@@ -112,21 +112,10 @@ int main(int argc, char** argv)
 
 
         auto pSprite1 = resourceManager.loadSprite("NewSprite1", "GlebTextureAtlas", "SpriteShader", 100, 65, "gleb1");
-        auto pSprite2 = resourceManager.loadSprite("NewSprite2", "GlebTextureAtlas", "SpriteShader", 100, 65, "gleb2");
-        auto pSprite3 = resourceManager.loadSprite("NewSprite3", "GlebTextureAtlas", "SpriteShader", 100, 65, "gleb3");
-        auto pSprite4 = resourceManager.loadSprite("NewSprite4", "GlebTextureAtlas", "SpriteShader", 100, 65, "gleb4");
-        auto pSprite5 = resourceManager.loadSprite("NewSprite5", "GlebTextureAtlas", "SpriteShader", 100, 65, "gleb5");
 
 
         pSprite1->setPosition(glm::vec2(rand() % 540, rand() % 380));
-        pSprite2->setPosition(glm::vec2(rand() % 540, rand() % 380));
-
-        pSprite3->setPosition(glm::vec2(rand() % 540, rand() % 380));
-
-        pSprite4->setPosition(glm::vec2(rand() % 540, rand() % 380));
-
-        pSprite5->setPosition(glm::vec2(rand() % 540, rand() % 380));
-
+       
 
 
 
@@ -149,11 +138,6 @@ int main(int argc, char** argv)
             glClear(GL_COLOR_BUFFER_BIT);
 
              pSprite1->render();
-
-             pSprite2->render();
-            //pSprite3->render();
-            //pSprite4->render();
-            //pSprite5->render();
 
             /* Swap front and back buffers */
             glfwSwapBuffers(pWindow);
